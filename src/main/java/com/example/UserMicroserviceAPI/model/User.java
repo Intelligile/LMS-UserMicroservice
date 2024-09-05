@@ -36,6 +36,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "authority_id")
     )
     private Set<Authority> authorities;  // Updated to lowercase and plural
+
+    @ManyToMany(mappedBy = "users")
+    private Set<UserGroup> groups;
+
     public Long getId() {
         return id;
     }
@@ -106,5 +110,14 @@ public class User {
 
     public void setAuthorities(Set<Authority> Authority) {
         this.authorities = Authority;
+    }
+
+
+    public Set<UserGroup> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<UserGroup> groups) {
+        this.groups = groups;
     }
 }

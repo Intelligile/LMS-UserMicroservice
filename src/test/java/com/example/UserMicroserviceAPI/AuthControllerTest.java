@@ -43,13 +43,13 @@ public class AuthControllerTest {
     @Test
     public void testAuthenticateUser() {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("fadelzohbi1");
+        loginRequest.setUsername("fadelzohbi");
         loginRequest.setPassword("12345");
 
         ResponseEntity<?> response = authController.authenticateUser(loginRequest);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername("fadelzohbi1");
+        UserDetails userDetails = userDetailsService.loadUserByUsername("fadelzohbi");
         String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
         assertThat(jwtToken).isNotNull();
     }
