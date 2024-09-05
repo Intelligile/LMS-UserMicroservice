@@ -55,7 +55,7 @@ public class AuthorityService {
     public Authority createAuthorityWithPermissions(AuthorityDto authorityDTO) {
         Authority authority = new Authority();
         authority.setAuthority(authorityDTO.getAuthority());
-        authority.setAuthorityDescription(authorityDTO.getDescription());
+        authority.setDescription(authorityDTO.getDescription());
 
         Set<Permission> permissions = new HashSet<>();
         for (Long permissionId : authorityDTO.getPermissionIds()) {
@@ -115,13 +115,13 @@ public class AuthorityService {
         AuthorityDto dto = new AuthorityDto();
         dto.setId(authority.getId());
         dto.setAuthority(authority.getAuthority());
-        dto.setDescription(authority.getAuthorityDescription());
+        dto.setDescription(authority.getDescription());
         dto.setPermissionIds(authority.getPermissions().stream()
                 .map(Permission::getId)
                 .collect(Collectors.toSet()));
-        dto.setUserIds(authority.getUsers().stream()
-                .map(User::getId)
-                .collect(Collectors.toSet()));  // Adding user IDs to the DTO
+        // dto.setUserIds(authority.getUsers().stream()
+        //         .map(User::getId)
+        //         .collect(Collectors.toSet()));  // Adding user IDs to the DTO
         return dto;
     }
 }

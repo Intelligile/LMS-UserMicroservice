@@ -1,9 +1,6 @@
-
 package com.example.UserMicroserviceAPI.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -21,23 +18,27 @@ import java.util.Set;
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Authority {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String authority;  // Updated to lowercase
+    private String authority;  // Keep the name lowercase if that’s the convention
     private String description;
 
-    @ManyToMany(mappedBy = "authorities")  // Updated to match User entity
-    private Set<User> users;
+    // @ManyToMany(mappedBy = "authorities")
+    // private Set<User> users = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "authority_permissions",
             joinColumns = @JoinColumn(name = "authority_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
     private Set<Permission> permissions = new HashSet<>();
+
+    // Getters and setters
+
     public Long getId() {
         return id;
     }
@@ -50,25 +51,25 @@ public class Authority {
         return authority;
     }
 
-    public void setAuthority(String Authority) {
-        this.authority = Authority;
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 
-    public String getAuthorityDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setAuthorityDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
+    // public Set<User> getUsers() {
+    //     return users;
+    // }
 
-    public void setUsers(Set<User> Users) {
-        this.users = Users;
-    }
+    // public void setUsers(Set<User> users) {
+    //     this.users = users;
+    // }
 
     public Set<Permission> getPermissions() {
         return permissions;

@@ -13,13 +13,8 @@ public class UserGroup {
     private String name;
     private String description;
 
-    @ManyToMany
-    @JoinTable(
-        name = "group_users",
-        joinColumns = @JoinColumn(name = "group_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> users;
+    // @ManyToMany(mappedBy = "groups")
+    // private Set<User> users;
 
     // Getters and Setters
 
@@ -47,11 +42,11 @@ public class UserGroup {
         this.description = description;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
+    // public Set<User> getUsers() {
+    //     return users;
+    // }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
+    // public void setUsers(Set<User> users) {
+    //     this.users = users;
+    // }
 }

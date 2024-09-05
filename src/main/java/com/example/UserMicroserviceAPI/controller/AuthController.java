@@ -80,6 +80,7 @@ public class AuthController {
     // Assuming only admins should access this
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
+        System.out.println("LIST OF USERS "+users.toArray());
         return ResponseEntity.ok(users);
     }
 
@@ -108,4 +109,6 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+
 }

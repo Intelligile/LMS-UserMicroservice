@@ -1,9 +1,6 @@
-
 package com.example.UserMicroserviceAPI.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,9 +11,11 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.JoinColumn;
 import java.util.Set;
+
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,10 +34,18 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id")
     )
-    private Set<Authority> authorities;  // Updated to lowercase and plural
+    private Set<Authority> authorities;
 
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany
+    @JoinTable(
+            name = "group_users",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id")
+    )
     private Set<UserGroup> groups;
+
+
+    // Getters and setters
 
     public Long getId() {
         return id;
@@ -108,10 +115,9 @@ public class User {
         return authorities;
     }
 
-    public void setAuthorities(Set<Authority> Authority) {
-        this.authorities = Authority;
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
     }
-
 
     public Set<UserGroup> getGroups() {
         return groups;

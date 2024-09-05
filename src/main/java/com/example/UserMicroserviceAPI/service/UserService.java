@@ -26,8 +26,10 @@ import com.example.UserMicroserviceAPI.model.Authority;
 
 import com.example.UserMicroserviceAPI.model.User;
 import com.example.UserMicroserviceAPI.model.UserAuthority;
+import com.example.UserMicroserviceAPI.model.UserGroup;
 import com.example.UserMicroserviceAPI.repository.AuthorityRepository;
 import com.example.UserMicroserviceAPI.repository.UserAuthorityRepository;
+import com.example.UserMicroserviceAPI.repository.UserGroupRepository;
 import com.example.UserMicroserviceAPI.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -48,7 +50,20 @@ public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    
+      @Autowired
+    private UserGroupRepository userGroupRepository;
+
+    @Transactional
+    public void assignUsersToGroup(List<Long> userIds, Long groupId) {
+        UserGroup group = userGroupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        List<User> users = userRepository.findAllById(userIds);
+        for (User user : users) {
+            user.getGroups().add(group);
+        }
+        userRepository.saveAll(users);
+    }
     public List<User> getAllUsers() {
         return userRepository.findAll(); // Assumes UserRepository extends JpaRepository<User, Long>
     }

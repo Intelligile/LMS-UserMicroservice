@@ -8,3 +8,4 @@ import com.example.UserMicroserviceAPI.model.UserGroup;
 @Repository
 public interface GroupRepository extends JpaRepository<UserGroup, Long> {
 }
+

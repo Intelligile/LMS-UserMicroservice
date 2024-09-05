@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.UserMicroserviceAPI.model.UserGroup;
 import com.example.UserMicroserviceAPI.service.GroupService;
+import com.example.UserMicroserviceAPI.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/auth")
 public class GroupController {
+      @Autowired
+    private UserService userService;
 
     @Autowired
     private GroupService groupService;
@@ -47,6 +50,8 @@ public class GroupController {
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Return 500 for other errors
         }
+
+        
     }
     
     
@@ -57,5 +62,14 @@ public class GroupController {
         groupService.deleteGroup(id);
         System.out.print("DELETE ID=>"+id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Assign users to a group
+    @PostMapping("/groups/{groupId}/assign-users")
+    public ResponseEntity<?> assignUsersToGroup(
+            @PathVariable Long groupId, 
+            @RequestBody List<Long> userIds) {
+        userService.assignUsersToGroup(userIds, groupId);
+        return ResponseEntity.ok().build();
     }
 }
