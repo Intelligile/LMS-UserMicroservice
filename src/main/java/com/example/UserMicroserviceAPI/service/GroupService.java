@@ -1,12 +1,22 @@
 package com.example.UserMicroserviceAPI.service;
 
+import java.util.Set;
+
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.UserMicroserviceAPI.model.User;
 import com.example.UserMicroserviceAPI.model.UserGroup;
 import com.example.UserMicroserviceAPI.repository.GroupRepository;
+import com.example.UserMicroserviceAPI.repository.UserGroupRepository;
+import com.example.UserMicroserviceAPI.repository.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Optional;
 
 @Service
@@ -14,7 +24,10 @@ public class GroupService {
 
     @Autowired
     private GroupRepository groupRepository;
-
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private UserGroupRepository userGroupRepository;
     public List<UserGroup> getAllGroups() {
         return groupRepository.findAll();
     }
@@ -34,6 +47,28 @@ public class GroupService {
         group.setDescription(groupDetails.getDescription());
         return groupRepository.save(group);
     }
+    @Transactional
+    public void revokeUsersFromGroup(Long groupId, List<Long> userIds) {
+        UserGroup group = userGroupRepository.findById(groupId)
+            .orElseThrow(() -> new EntityNotFoundException("Group not found"));
+    
+        List<User> users = userRepository.findAllById(userIds);
+    
+        // Remove the association between users and the group
+        for (User user : users) {
+            user.getGroups().remove(group);
+        }
+        group.getUsers().removeAll(users);
+    
+        userGroupRepository.save(group);
+        userRepository.saveAll(users); // Ensure users are updated
+        userGroupRepository.flush();
+    }
+    
+    
+    
+
+    
 
     public void deleteGroup(Long id) {
         groupRepository.deleteById(id);

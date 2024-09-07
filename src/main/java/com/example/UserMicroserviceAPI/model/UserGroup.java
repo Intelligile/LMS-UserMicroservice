@@ -3,6 +3,8 @@ package com.example.UserMicroserviceAPI.model;
 import jakarta.persistence.*;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class UserGroup {
 
@@ -13,8 +15,9 @@ public class UserGroup {
     private String name;
     private String description;
 
-    // @ManyToMany(mappedBy = "groups")
-    // private Set<User> users;
+@ManyToMany(mappedBy = "groups")
+@JsonIgnore // Prevents recursive serialization of User in the UserGroup entity
+private Set<User> users;
 
     // Getters and Setters
 
@@ -42,11 +45,11 @@ public class UserGroup {
         this.description = description;
     }
 
-    // public Set<User> getUsers() {
-    //     return users;
-    // }
+    public Set<User> getUsers() {
+        return users;
+    }
 
-    // public void setUsers(Set<User> users) {
-    //     this.users = users;
-    // }
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
 }

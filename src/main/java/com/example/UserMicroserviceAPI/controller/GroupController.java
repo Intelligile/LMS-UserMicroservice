@@ -23,6 +23,10 @@ public class GroupController {
     @Autowired
     private GroupService groupService;
 
+
+    @Autowired
+    private GroupService userGroupService;
+
     @GetMapping("/groups")
     public List<UserGroup> getAllGroups() {
         return groupService.getAllGroups();
@@ -70,6 +74,13 @@ public class GroupController {
             @PathVariable Long groupId, 
             @RequestBody List<Long> userIds) {
         userService.assignUsersToGroup(userIds, groupId);
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/groups/{groupId}/revoke-users")
+    public ResponseEntity<Void> revokeUsersFromGroup(
+            @PathVariable Long groupId,
+            @RequestBody List<Long> userIds) {
+        userGroupService.revokeUsersFromGroup(groupId, userIds);
         return ResponseEntity.ok().build();
     }
 }
