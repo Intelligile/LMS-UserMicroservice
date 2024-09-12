@@ -253,4 +253,8 @@ public List<User> registerUsers(List<SignupRequest> signupRequests) {
             throw e;
         }
     }
+
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }

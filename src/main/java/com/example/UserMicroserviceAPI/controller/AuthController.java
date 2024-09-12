@@ -4,9 +4,12 @@ package com.example.UserMicroserviceAPI.controller;
 import com.example.UserMicroserviceAPI.dto.LoginRequest;
 import com.example.UserMicroserviceAPI.dto.LoginResponse;
 import com.example.UserMicroserviceAPI.dto.SignupRequest;
+import com.example.UserMicroserviceAPI.dto.UserDTO;
 import com.example.UserMicroserviceAPI.jwt.JwtUtils;
 import com.example.UserMicroserviceAPI.model.User;
 import com.example.UserMicroserviceAPI.service.UserService;
+
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -109,6 +112,32 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    @GetMapping("/user/profile/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+        return userService.getUserByUsername(username)
+            .map(user -> ResponseEntity.ok(user))
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // if want to get user profile without authorities and groups 
+    // @GetMapping("/user/profile/{username}")
+    // public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) {
+    //     return userService.getUserByUsername(username)
+    //         .map(user -> {
+    //             UserDTO dto = new UserDTO(
+    //                 user.getId(),
+    //                 user.getUsername(),
+    //                 user.getEmail(),
+    //                 user.getFirstname(),
+    //                 user.getLastname(),
+    //                 user.getPhone(),
+    //                 user.isEnabled(), null, null
+    //             );
+    //             return ResponseEntity.ok(dto);
+    //         })
+    //         .orElseGet(() -> ResponseEntity.notFound().build());
+    // }
 
 
 }
