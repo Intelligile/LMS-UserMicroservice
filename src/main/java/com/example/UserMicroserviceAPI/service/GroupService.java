@@ -1,8 +1,5 @@
 package com.example.UserMicroserviceAPI.service;
 
-import java.util.Set;
-
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +13,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Optional;
 
 @Service

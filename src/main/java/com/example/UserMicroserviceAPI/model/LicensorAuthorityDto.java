@@ -1,10 +1,9 @@
 package com.example.UserMicroserviceAPI.model;
 
-
 import java.util.HashSet;
 import java.util.Set;
 
-public class AuthorityDto {
+public class LicensorAuthorityDto {
     private long id;
     private String authority;
     private String description;

@@ -4,20 +4,13 @@ package com.example.UserMicroserviceAPI.controller;
 import com.example.UserMicroserviceAPI.dto.LoginRequest;
 import com.example.UserMicroserviceAPI.dto.LoginResponse;
 import com.example.UserMicroserviceAPI.dto.SignupRequest;
-import com.example.UserMicroserviceAPI.dto.UserDTO;
-import com.example.UserMicroserviceAPI.jwt.JwtUtils;
-import com.example.UserMicroserviceAPI.model.User;
 import com.example.UserMicroserviceAPI.service.CustomUserDetailsService;
-import com.example.UserMicroserviceAPI.service.UserService;
-
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.example.UserMicroserviceAPI.jwt.JwtUtils;
+import com.example.UserMicroserviceAPI.model.LicensorUser;
+import com.example.UserMicroserviceAPI.service.LicensorUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -32,6 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,20 +34,20 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/auth")
-public class AuthController {
-        private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
+@RequestMapping("/licensor/api/auth")
+public class LicensorAuthController {
+    private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
     @Autowired
-    private UserService userService;
+    private LicensorUserService userService;
 @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-    @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+    @Autowired
     private JwtUtils jwtUtils;
-    private boolean isLicensor = false;
+    private boolean isLicensor = true;
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         UserDetails userDetails;
@@ -91,6 +86,12 @@ public class AuthController {
         LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken);
         return ResponseEntity.ok(response);
     }
+    
+
+    
+
+    
+    
     @PostMapping("/signup")
     public ResponseEntity<?> registerUsers(@Validated @RequestBody List<SignupRequest> signupRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -98,7 +99,7 @@ public class AuthController {
         }
 
         try {
-            List<User> registeredUsers = userService.registerUsers(signupRequests);
+            List<LicensorUser> registeredUsers = userService.registerUsers(signupRequests);
             return ResponseEntity.ok("Users registered successfully: " + registeredUsers);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -107,8 +108,8 @@ public class AuthController {
 
     @GetMapping("/users")
     // Assuming only admins should access this
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+    public ResponseEntity<List<LicensorUser>> getAllUsers() {
+        List<LicensorUser> users = userService.getAllUsers();
         System.out.println("LIST OF USERS "+users.toArray());
         return ResponseEntity.ok(users);
     }
@@ -121,7 +122,7 @@ public class AuthController {
         }
 
         try {
-            User updatedUser = userService.updateUser(userId, updateUserRequest);
+            LicensorUser updatedUser = userService.updateUser(userId, updateUserRequest);
             return ResponseEntity.ok(updatedUser);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -140,7 +141,7 @@ public class AuthController {
     }
 
     @GetMapping("/user/profile/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+    public ResponseEntity<LicensorUser> getUserByUsername(@PathVariable String username) {
         return userService.getUserByUsername(username)
             .map(user -> ResponseEntity.ok(user))
             .orElseGet(() -> ResponseEntity.notFound().build());

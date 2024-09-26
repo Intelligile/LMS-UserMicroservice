@@ -11,9 +11,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.example.UserMicroserviceAPI.service.CustomUserDetailsService;
 
 import java.io.IOException;
 
@@ -26,40 +29,57 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     //field injection, automatically autowiring jwtUtils , userDetailsService instances
     @Autowired
     private JwtUtils jwtUtils;
-    @Autowired
-    private UserDetailsService userDetailsService;
+        @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     //custom filter
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        logger.debug("AuthTokenFi1ter called for URI : {}", request.getRequestURI());
-        try {
-            //extract jwt token
-            String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUserNameFromJwtToken(jwt);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                //token
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities());//userDetails.getAuthorities() the roles
-                logger.debug("Roles from JWT : {}" , userDetails.getAuthorities());
-                //enhancing the authentication object (token) with additional details from the request (session id ,,,)
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                //setting the security context , authenticating the user for the duration of the request
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    logger.debug("AuthTokenFilter called for URI: {}", request.getRequestURI());
+    try {
+        // Extract JWT token
+        String jwt = parseJwt(request);
+        if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+            String username = jwtUtils.getUserNameFromJwtToken(jwt);
+            logger.debug("Extracted username from JWT: {}", username);
+            
+            // Determine if the user is a licensor using the new method
+            boolean isLicensor = customUserDetailsService.isLicensorUser(username); // Call isLicensorUser
+            logger.debug("Extracted user type from function: {}", isLicensor);
+            // Load user details based on the type
+            UserDetails userDetails = customUserDetailsService.loadUserByUsernameBasedOnType(username, isLicensor);
+            if (userDetails == null) {
+                logger.warn("UserDetails not found for username: {}", username);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found");
+                return; // Stop processing if user not found
             }
 
-        }catch (Exception e ){
-            logger.error("cannot set user authentication :{}",e);
+            // Create authentication token
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
+            
+            logger.debug("Roles from JWT: {}", userDetails.getAuthorities());
+
+            // Enhance the authentication object with additional details from the request
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            // Set the security context, authenticating the user for the duration of the request
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            logger.debug("Authentication set successfully for user: {}", username);
         }
-        //continue the filter chain(since we've added our own custom filter) as usual
-        filterChain.doFilter(request,response);
+
+    } catch (Exception e) {
+        logger.error("Cannot set user authentication: {}", e.getMessage(), e);
     }
+    // Continue the filter chain as usual
+    filterChain.doFilter(request, response);
+}
+
+   
 
     private String parseJwt(HttpServletRequest request){
         String jwt= jwtUtils.getJwtFromHeader(request);
