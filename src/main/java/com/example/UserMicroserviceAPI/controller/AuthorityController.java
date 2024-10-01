@@ -1,7 +1,6 @@
 
 package com.example.UserMicroserviceAPI.controller;
 
-import com.example.UserMicroserviceAPI.model.Authority;
 import com.example.UserMicroserviceAPI.model.AuthorityDto;
 import com.example.UserMicroserviceAPI.model.UserWithRolesDto;
 import com.example.UserMicroserviceAPI.service.AuthorityService;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 

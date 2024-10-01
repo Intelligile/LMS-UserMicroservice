@@ -1,7 +1,6 @@
 package com.example.UserMicroserviceAPI.repository;
 
 import com.example.UserMicroserviceAPI.model.Authority;
-import com.example.UserMicroserviceAPI.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.UserMicroserviceAPI.model.UserAuthority;

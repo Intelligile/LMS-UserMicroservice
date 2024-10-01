@@ -42,7 +42,6 @@ public class LicensorUser {
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "group_id")
 )
-
 private Set<LicensorUserGroup> LicensorGroups;
 
 

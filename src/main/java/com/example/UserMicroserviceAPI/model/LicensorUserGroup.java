@@ -16,7 +16,7 @@ public class LicensorUserGroup {
     private String description;
 
 @ManyToMany(mappedBy = "LicensorGroups")
-@JsonIgnore // Prevents recursive serialization of User in the UserGroup entity
+ // Prevents recursive serialization of User in the UserGroup entity
 private Set<LicensorUser> LicensorUsers;
 
     // Getters and Setters

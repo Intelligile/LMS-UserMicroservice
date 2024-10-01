@@ -2,8 +2,6 @@ package com.example.UserMicroserviceAPI.model;
 
 import jakarta.persistence.*;
 
-import java.util.Set;
-
 
 @Entity
 @Table(name = "user_authorities")

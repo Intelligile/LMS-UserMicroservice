@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.UserMicroserviceAPI.dto.LicensorUserGroupDTO;
 import com.example.UserMicroserviceAPI.model.LicensorUserGroup;
 import com.example.UserMicroserviceAPI.service.LicensorGroupService;
 import com.example.UserMicroserviceAPI.service.LicensorUserService;
@@ -37,10 +38,17 @@ public class LicensorGroupController {
         return group.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // @PostMapping("/groups/add-group")
+    // public ResponseEntity<LicensorUserGroup> createGroup(@RequestBody LicensorUserGroup group) {
+    //     LicensorUserGroup createdGroup = groupService.createGroup(group);
+    //     return ResponseEntity.status(HttpStatus.CREATED).body(createdGroup);
+    // }
+
     @PostMapping("/groups/add-group")
-    public ResponseEntity<LicensorUserGroup> createGroup(@RequestBody LicensorUserGroup group) {
-        LicensorUserGroup createdGroup = groupService.createGroup(group);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdGroup);
+    public LicensorUserGroup createGroup(@RequestBody LicensorUserGroupDTO groupDTO) {
+        System.out.println("HERE IS THE USERS LIST " + groupDTO.getUserGroupIds());
+       return groupService.createGroup(groupDTO);
+      
     }
 
   
