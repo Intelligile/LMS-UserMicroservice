@@ -259,5 +259,11 @@ public List<User> registerUsers(List<SignupRequest> signupRequests) {
         return userRepository.findByUsername(username);
     }
 
+    // Method to check if a user exists by ID
+    public boolean userExists(Long userId) {
+        System.out.println("LICENSEEE USER ID"+userId);
+        return userRepository.existsById(userId);
+    }
+
 
 }

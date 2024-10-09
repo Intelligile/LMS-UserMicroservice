@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.example.UserMicroserviceAPI.service.LicensorUserService;
+import com.example.UserMicroserviceAPI.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,8 @@ public class LicensorUserController {
 
     @Autowired
     private LicensorUserService userService;
+    @Autowired
+    private UserService licenseeUserService;
 
     // @GetMapping("/hello")
     // public String sayHi() {
@@ -81,12 +85,19 @@ public class LicensorUserController {
 
         @PostMapping("/activate-license")
     public ResponseEntity<String> activateLicense(@RequestBody LicenseRequest request, HttpServletRequest httpRequest,HttpServletResponse httpResponse) {
-        // Pass the request and HttpServletRequest to the service method
-        String response = userService.activateUserLicense(request, httpRequest, httpResponse);
-        if (response == null) {
-            return ResponseEntity.badRequest().build(); // Handle null response
-        }
-        return ResponseEntity.ok(response);
+       // Validate that the licensee user exists
+       if (!licenseeUserService.userExists(request.getLicenseeUserId())) {
+   
+        return ResponseEntity.badRequest().body("Licensee user ID not found.");
+    }
+
+    // Proceed to activate the license
+    try {
+        String result = userService.activateUserLicense(request,httpRequest,httpResponse);
+        return ResponseEntity.ok(result);
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
     }
 
     @GetMapping("/license/{licenseId}/valid")
