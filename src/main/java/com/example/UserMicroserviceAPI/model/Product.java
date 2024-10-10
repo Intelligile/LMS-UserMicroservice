@@ -7,8 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 
-
-@Entity  // This annotation is crucial
+@Entity
 public class Product {
 
     @Id
@@ -25,6 +24,11 @@ public class Product {
     private Long regionId;
 
     private String imageUrl;
+
+    // No-argument constructor
+    public Product() {
+    }
+
     // Getters and Setters
     public Long getId() {
         return id;

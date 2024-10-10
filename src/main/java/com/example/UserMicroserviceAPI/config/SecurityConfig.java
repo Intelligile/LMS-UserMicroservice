@@ -103,7 +103,7 @@ public JdbcUserDetailsManager userDetailsManager(DataSource dataSource) {
                 }))
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/licensor/api/auth/**", "/api/auth/**" , "/api/products/**","/api/regions/**" , "/licensor/api/authorities/**").permitAll()
+                    .requestMatchers("/licensor/api/auth/**", "/api/auth/**" , "/api/products/**","/api/regions/**" , "/licensor/api/authorities/**" , "/licensor/api/auth-codes/**").permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
