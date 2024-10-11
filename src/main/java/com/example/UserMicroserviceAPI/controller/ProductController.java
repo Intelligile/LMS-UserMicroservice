@@ -61,4 +61,26 @@ public class ProductController {
         List<Product> savedProducts = productService.saveAllProducts(products);
         return ResponseEntity.ok(savedProducts);
     }
+    // Update a product by ID
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
+        Optional<Product> existingProductOpt = productService.getProductById(id);
+
+        if (existingProductOpt.isPresent()) {
+            Product existingProduct = existingProductOpt.get();
+            // Update fields of the existing product
+            existingProduct.setName(updatedProduct.getName());
+            existingProduct.setPrice(updatedProduct.getPrice());
+            existingProduct.setDescription(updatedProduct.getDescription());
+            existingProduct.setRegionId(updatedProduct.getRegionId());
+            existingProduct.setImageUrl(updatedProduct.getImageUrl());  // Optional: If image URL needs to be updated
+
+            // Save the updated product
+            Product savedProduct = productService.saveProduct(existingProduct);
+            return ResponseEntity.ok(savedProduct);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
