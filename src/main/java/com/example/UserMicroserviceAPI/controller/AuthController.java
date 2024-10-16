@@ -56,20 +56,20 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         UserDetails userDetails;
-    
+
         try {
             // Load user based on the provided type
             userDetails = customUserDetailsService.loadUserByUsernameBasedOnType(loginRequest.getUsername(), isLicensor);
-            
+
             // Verify password using PasswordEncoder
             if (!passwordEncoder.matches(loginRequest.getPassword(), userDetails.getPassword())) {
                 throw new BadCredentialsException("Invalid password");
             }
-    
+
             // Perform authentication
             Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-    
+
         } catch (BadCredentialsException e) {
             Map<String, Object> map = new HashMap<>();
             map.put("message", "Bad credentials");
@@ -82,13 +82,13 @@ public class AuthController {
             logger.error("Internal authentication error: {}", e.getMessage());
             return new ResponseEntity<>("Internal error during authentication", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    
+
         String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
         String roles = userDetails.getAuthorities()
-            .stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(Collectors.joining(","));
-        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken);
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken, false); // isLicensor = false
         return ResponseEntity.ok(response);
     }
     @PostMapping("/signup")

@@ -1,17 +1,18 @@
 package com.example.UserMicroserviceAPI.dto;
 
-
 public class LoginResponse {
 
     //response structure
     private String jwtToken;
     private String username;
     private String roles;
+    private boolean isLicensor;  // New field
 
-    public LoginResponse(String username, String roles, String jwtToken) {
+    public LoginResponse(String username, String roles, String jwtToken, boolean isLicensor) {
         this.jwtToken = jwtToken;
         this.username = username;
         this.roles = roles;
+        this.isLicensor = isLicensor;  // Assign the value
     }
 
     public String getJwtToken() {
@@ -36,5 +37,13 @@ public class LoginResponse {
 
     public void setRoles(String roles) {
         this.roles = roles;
+    }
+
+    public boolean getIsLicensor() {
+        return isLicensor;
+    }
+
+    public void setIsLicensor(boolean isLicensor) {
+        this.isLicensor = isLicensor;
     }
 }
